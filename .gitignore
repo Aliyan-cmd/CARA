@@ -22,8 +22,9 @@ build/
 .env.production.local
 
 # Database
-backend/cara.db
-backend/cara.db-journal
+# Removed for Vercel deployment support
+# backend/cara.db
+# backend/cara.db-journal
 
 # Logs
 npm-debug.log*

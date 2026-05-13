@@ -60,6 +60,17 @@ CARA is a high-end, full-stack e-commerce platform for a luxury clothing brand. 
    ```
    The application will be available at `http://localhost:5173`.
 
+## Deployment
+
+### Vercel (Recommended)
+
+1. Connect your GitHub repository to **Vercel**.
+2. Vercel will automatically detect the `vercel.json` configuration in the root.
+3. In the Vercel Dashboard:
+   - Ensure the **Build Command** is set to `npm run build` (detected automatically).
+   - The backend is served via Vercel Functions in the `api/` directory.
+4. **Note on SQLite**: This project uses SQLite for demonstration. On Vercel, the database is stored in `/tmp` and will reset when the serverless function restarts. For production, consider migrating to a hosted database like PostgreSQL or MongoDB.
+
 ## License
 
 ISC

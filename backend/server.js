@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const path = require('path');
 const db = require('./db');
 
 dotenv.config();
@@ -47,7 +48,6 @@ app.get('/api/products/total', (req, res) => {
             res.status(400).json({ error: err.message });
             return;
         }
-        // row might be { "total": n } or { "COUNT(*)": n } depending on environment
         const total = row ? (row.total !== undefined ? row.total : row['COUNT(*)']) : 0;
         res.json({
             message: 'success',
@@ -102,14 +102,13 @@ app.get('/api/categories', (req, res) => {
     });
 });
 
-// Get products by category (with pagination)
+// Get products by category
 app.get('/api/products/category/:id', (req, res) => {
     const limit = parseInt(req.query.limit) || 8;
     const offset = parseInt(req.query.offset) || 0;
-    const categoryId = req.params.id;
-    
     const sql = 'SELECT * FROM products WHERE category_id = ? LIMIT ? OFFSET ?';
-    db.all(sql, [categoryId, limit, offset], (err, rows) => {
+    const params = [req.params.id, limit, offset];
+    db.all(sql, params, (err, rows) => {
         if (err) {
             res.status(400).json({ error: err.message });
             return;
@@ -121,9 +120,9 @@ app.get('/api/products/category/:id', (req, res) => {
     });
 });
 
-// Get user profile (using ID 1 for now as a demo)
+// Get user profile
 app.get('/api/users/:id', (req, res) => {
-    const sql = 'SELECT id, username, email, location, role, created_at FROM users WHERE id = ?';
+    const sql = 'SELECT * FROM users WHERE id = ?';
     const params = [req.params.id];
     db.get(sql, params, (err, row) => {
         if (err) {
@@ -137,10 +136,9 @@ app.get('/api/users/:id', (req, res) => {
     });
 });
 
-// Placeholder for Order creation
+// Create order
 app.post('/api/orders', (req, res) => {
-    const { user_id, total_price, shipping_address, items } = req.body;
-    // In a real app, you'd start a transaction here
+    const { user_id, total_price, shipping_address } = req.body;
     const sql = 'INSERT INTO orders (user_id, total_price, shipping_address) VALUES (?, ?, ?)';
     const params = [user_id, total_price, shipping_address];
     
@@ -150,7 +148,6 @@ app.post('/api/orders', (req, res) => {
             return;
         }
         const orderId = this.lastID;
-        // Insert items (simplified)
         res.json({
             message: 'Order placed successfully',
             order_id: orderId
@@ -158,6 +155,19 @@ app.post('/api/orders', (req, res) => {
     });
 });
 
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+// The "catchall" handler: for any request that doesn't
+// match one above, send back React's index.html file.
+app.get('*', (req, res) => {
+    if (!req.path.startsWith('/api')) {
+        res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
+
+module.exports = app;

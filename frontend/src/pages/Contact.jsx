@@ -1,44 +1,44 @@
 import React from 'react';
-import { MapPin, Phone, Mail, Send } from 'lucide-react';
+import { Mail, Phone, MapPin, Send } from 'lucide-react';
 
 const Contact = () => {
   return (
     <div style={{ paddingTop: '150px' }}>
       <div className="container">
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '4rem' }}>
-          
-          {/* Contact Info */}
-          <div>
-            <h1 style={{ fontSize: '4rem', marginBottom: '2rem' }}>Get in <span style={{ color: 'var(--primary)' }}>Touch.</span></h1>
-            <p style={{ color: 'var(--text-muted)', fontSize: '1.2rem', marginBottom: '3rem' }}>
-              Have questions about our collection or need assistance with an order? Our concierge team is here to help.
-            </p>
-            
+        <div style={{ textAlign: 'center', marginBottom: '5rem' }}>
+          <h1 style={{ fontSize: '4rem', marginBottom: '1rem', fontFamily: "'Playfair Display', serif" }}>Get In Touch</h1>
+          <p style={{ color: 'var(--text-muted)', maxWidth: '600px', margin: '0 auto' }}>Whether you have a question about our collection, shipping, or just want to say hello, we're here to help.</p>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '4rem', marginBottom: '100px' }}>
+          {/* Contact Information */}
+          <div className="fade-in">
+            <h2 style={{ fontSize: '2rem', marginBottom: '2.5rem' }}>Contact Information</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                <div style={{ width: '60px', height: '60px', background: 'var(--glass)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--glass-border)' }}>
-                  <Phone size={24} color="var(--primary)" />
+              <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+                <div style={{ width: '60px', height: '60px', background: 'var(--glass)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
+                  <Mail size={24} />
                 </div>
                 <div>
-                  <h4 style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Call Us</h4>
-                  <p style={{ fontSize: '1.2rem' }}>+44 20 7946 0958</p>
+                  <h4 style={{ fontSize: '0.9rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>Email Us</h4>
+                  <p style={{ fontSize: '1.2rem' }}>concierge@cara-luxury.com</p>
                 </div>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                <div style={{ width: '60px', height: '60px', background: 'var(--glass)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--glass-border)' }}>
-                  <Mail size={24} color="var(--primary)" />
+              <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+                <div style={{ width: '60px', height: '60px', background: 'var(--glass)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
+                  <Phone size={24} />
                 </div>
                 <div>
-                  <h4 style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Email Us</h4>
-                  <p style={{ fontSize: '1.2rem' }}>concierge@caraclo.com</p>
+                  <h4 style={{ fontSize: '0.9rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>Call Us</h4>
+                  <p style={{ fontSize: '1.2rem' }}>+1 (888) 123-4567</p>
                 </div>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                <div style={{ width: '60px', height: '60px', background: 'var(--glass)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--glass-border)' }}>
-                  <MapPin size={24} color="var(--primary)" />
+              <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+                <div style={{ width: '60px', height: '60px', background: 'var(--glass)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
+                  <MapPin size={24} />
                 </div>
                 <div>
-                  <h4 style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Visit Us</h4>
+                  <h4 style={{ fontSize: '0.9rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>Visit Our Atelier</h4>
                   <p style={{ fontSize: '1.2rem' }}>123 Mayfair St, London, UK</p>
                 </div>
               </div>

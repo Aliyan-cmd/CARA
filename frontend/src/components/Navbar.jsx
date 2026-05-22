@@ -14,6 +14,7 @@ const Navbar = () => {
         <li><Link to="/shop">Shop</Link></li>
         <li><Link to="/about">About</Link></li>
         <li><Link to="/contact">Contact</Link></li>
+        <li><Link to="/admin" style={{ color: 'var(--primary)', fontWeight: '600' }}>Admin</Link></li>
       </ul>
       <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
         <Link to="/cart" style={{ position: 'relative' }}>

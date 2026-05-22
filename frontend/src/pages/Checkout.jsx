@@ -62,6 +62,7 @@ const Checkout = () => {
     <div style={{ paddingTop: '150px', paddingBottom: '100px' }}>
       <div className="container" style={{ maxWidth: '900px' }}>
         
+        {/* Progress Indicator */}
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '4rem', gap: '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: step >= 1 ? 'var(--primary)' : 'var(--text-muted)' }}>
             <div style={{ width: '30px', height: '30px', borderRadius: '50%', border: '1px solid', display: 'flex', alignItems: 'center', justifyContent: 'center', borderColor: step >= 1 ? 'var(--primary)' : 'var(--text-muted)' }}>1</div>

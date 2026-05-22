@@ -1,0 +1,2077 @@
+# CARA — Premium Fashion E-Commerce Platform
+
+## Comprehensive Documentation
+
+---
+
+- **Project:** CARA — Full-Stack Luxury Clothing E-Commerce Platform
+- **Author:** Aliyan-cmd
+- **Repository:** [https://github.com/Aliyan-cmd/CARA](https://github.com/Aliyan-cmd/CARA)
+- **Status:** Pre-production showcase / portfolio project
+- **Last Updated:** May 2026
+
+---
+
+## Table of Contents
+
+1. [Project Overview](#1-project-overview)
+2. [Use Cases](#2-use-cases)
+3. [System Architecture](#3-system-architecture)
+4. [Technology Stack](#4-technology-stack)
+5. [Frontend Architecture](#5-frontend-architecture)
+6. [Backend Architecture](#6-backend-architecture)
+7. [Database Schema & Models](#7-database-schema--models)
+8. [API Reference](#8-api-reference)
+9. [Component Library](#9-component-library)
+10. [State Management & Data Flow](#10-state-management--data-flow)
+11. [Design System & Theming](#11-design-system--theming)
+12. [Routing & Navigation](#12-routing--navigation)
+13. [Deployment Guide](#13-deployment-guide)
+14. [Development Guide](#14-development-guide)
+15. [Security Considerations](#15-security-considerations)
+16. [Performance Optimization](#16-performance-optimization)
+17. [Testing Strategy](#17-testing-strategy)
+18. [Future Roadmap](#18-future-roadmap)
+19. [Appendix: Code Examples](#19-appendix-code-examples)
+
+---
+
+## 1. Project Overview
+
+### 1.1 What is CARA?
+
+CARA is a **full-stack e-commerce platform** built for a fictional luxury clothing brand. It delivers a complete digital retail experience — from product discovery through checkout — with a premium glassmorphism user interface. The project is designed as a **portfolio/demonstration piece** showcasing proficiency across the modern JavaScript ecosystem.
+
+### 1.2 Brand Identity
+
+CARA positions itself as a luxury fashion house targeting sophisticated, style-conscious consumers. The brand voice emphasizes:
+- **Elegance** — Clean lines, refined typography, gold accents
+- **Quality** — Premium materials, artisanal craftsmanship
+- **Sustainability** — Ethical sourcing, organic materials
+- **Exclusivity** — Curated collections, inner-circle access
+
+### 1.3 Project Goals
+
+| Goal | Status |
+|---|---|
+| Demonstrate full-stack JavaScript development | ✅ Complete |
+| Showcase modern React patterns (Context, Hooks) | ✅ Complete |
+| Implement glassmorphism design system | ✅ Complete |
+| Build RESTful API with Express | ✅ Complete |
+| Provide complete shopping flow | ✅ Complete |
+| Enable Docker containerization | ✅ Complete |
+| Support Vercel deployment | ✅ Complete |
+| Achieve production readiness (auth, payments, testing) | 🔄 In Progress |
+
+### 1.4 Target Audience
+
+- **Primary:** Recruiters and hiring managers evaluating the developer's portfolio
+- **Secondary:** Developers interested in React + Express project architecture
+- **Tertiary:** End users exploring a luxury fashion e-commerce prototype
+
+---
+
+## 2. Use Cases
+
+### 2.1 Customer Use Cases
+
+#### UC-01: Browse the Collection
+
+**Actor:** Site Visitor  
+**Precondition:** User navigates to CARA homepage  
+**Flow:**
+1. User lands on the Home page with fullscreen hero section
+2. Scrolls to view Featured Collection (6 products fetched from `/api/products/featured`)
+3. Browses category cards (Men, Women, Accessories) with image overlays
+4. Clicks "View All Products" to navigate to the Shop page
+5. Views 8 products per page with pagination controls
+
+**Outcome:** User discovers product catalog and can proceed to detailed views
+
+#### UC-02: Filter & Paginate Products
+
+**Actor:** Site Visitor  
+**Precondition:** User is on the Shop page  
+**Flow:**
+1. User sees category filter buttons: "All Products", "Men", "Women", "Accessories"
+2. Clicks a category button (e.g., "Men")
+3. Products filter to show only items in that category
+4. User navigates through pages using numbered page buttons or prev/next arrows
+5. Active page is highlighted in gold
+6. Category selection resets pagination to page 1
+
+**Outcome:** User efficiently navigates catalog by category and page
+
+#### UC-03: View Product Details
+
+**Actor:** Site Visitor  
+**Precondition:** User is browsing products  
+**Flow:**
+1. User clicks a product card (image or name)
+2. System navigates to `/product/:id`
+3. Product image, name, description, and price load from `/api/products/:id`
+4. User views trust badges: Secure Checkout, Free Shipping, 30-Day Returns
+5. User can click "Add to Cart" or navigate back to shop
+
+**Outcome:** User has full product information to make a purchase decision
+
+#### UC-04: Add Items to Cart
+
+**Actor:** Site Visitor  
+**Precondition:** User is viewing a product card or details page  
+**Flow:**
+1. User clicks "Add to Cart" button
+2. Item is added to cart context; if already present, quantity increments
+3. Toast notification appears: "[Product Name] added to cart!"
+4. Cart badge icon in navbar updates with current item count
+5. Cart state is persisted to `localStorage` under key `cara_cart`
+
+**Outcome:** Item is stored in cart and user receives visual confirmation
+
+#### UC-05: Manage Shopping Cart
+
+**Actor:** Site Visitor  
+**Precondition:** User has items in cart  
+**Flow:**
+1. User navigates to `/cart`
+2. Views all cart items with thumbnail, name, price, and quantity controls
+3. Adjusts quantity using +/- buttons
+4. Removes individual items using trash icon
+5. Clicks "Clear All Items" to empty cart
+6. Views dynamic order summary: Subtotal, Shipping (FREE), Total
+7. Clicks "Checkout" to proceed
+
+**Outcome:** User has full control over cart contents before purchase
+
+#### UC-06: Complete Multi-Step Checkout
+
+**Actor:** Site Visitor  
+**Precondition:** User has items in cart and clicks "Checkout"  
+**Flow:**
+1. **Step 1 — Shipping Details:** User fills in full name, address, city, ZIP code
+2. Clicks "Continue to Payment"
+3. **Step 2 — Payment Method:** User enters card number, expiry date, CVV
+4. Views total due amount
+5. Clicks "Pay $X.XX" to submit
+6. System POSTs to `/api/orders` with user_id, total_price, shipping_address, items
+7. After 2-second simulated processing, cart is cleared
+8. **Step 3 — Order Confirmation:** Success screen with checkmark icon
+9. User clicks "Continue Shopping" to return to shop
+10. Empty cart redirects to `/cart` automatically
+
+**Outcome:** Order is placed in database; user receives confirmation
+
+#### UC-07: View Account Dashboard
+
+**Actor:** Registered User  
+**Precondition:** User navigates to `/account`  
+**Flow:**
+1. System fetches user data from `/api/users/1` (demo user)
+2. Profile sidebar displays: avatar circle, username, role badge, email, location, join date, sign out button
+3. Main content area shows:
+   - Recent Orders card (placeholder text)
+   - Security card (password info, 2FA status)
+   - Edit Profile form with Username, Email, Location fields
+4. "Save Changes" button is available (non-functional in current version)
+
+**Outcome:** User views profile information and account management options
+
+#### UC-08: Learn Brand Story
+
+**Actor:** Site Visitor  
+**Precondition:** User navigates to `/about`  
+**Flow:**
+1. User views side-by-side layout: brand story text + tailoring image
+2. Reads brand narrative: "Crafting Excellence Since 2024"
+3. Views company stats: 10k+ Clients, 50+ Partners, 100% Organic Cotton
+4. Scrolls to Values section: Sustainability, Artisanship, Innovation
+
+**Outcome:** User learns brand identity and values
+
+#### UC-09: Contact the Brand
+
+**Actor:** Site Visitor  
+**Precondition:** User navigates to `/contact`  
+**Flow:**
+1. User views contact information cards: Email, Phone, Visit Our Atelier
+2. Completes contact form: Full Name, Email Address, Message
+3. Clicks "Send Message" (form prevents default — demo only)
+4. Information displayed: `concierge@cara-luxury.com`, `+1 (888) 123-4567`, 123 Mayfair St, London
+
+**Outcome:** User has means to contact the brand
+
+#### UC-10: Subscribe to Newsletter
+
+**Actor:** Site Visitor  
+**Precondition:** User is on the Home page  
+**Flow:**
+1. User scrolls to "Join the Inner Circle" section
+2. Reads call-to-action about early access and exclusive events
+3. Enters email address in the input field
+4. Clicks "Join" button with Send icon
+5. Form prevents default submission (demo implementation)
+
+**Outcome:** User expresses interest in brand communications
+
+### 2.2 System Use Cases
+
+#### UC-11: API Serves Products with Pagination
+
+**Actor:** Frontend Application  
+**Trigger:** Shop page mounts or page/category changes  
+**Flow:**
+1. Frontend calls `GET /api/products?limit=8&offset=0`
+2. Server queries SQLite: `SELECT * FROM products LIMIT 8 OFFSET 0`
+3. Returns JSON: `{ message: "success", data: [...] }`
+4. Frontend renders product cards
+
+#### UC-12: Database Initialization
+
+**Actor:** Backend Server  
+**Trigger:** Server starts  
+**Flow:**
+1. `db.js` creates SQLite connection to `cara.db` (or `/tmp/cara.db` on Vercel)
+2. Reads `database.sql` schema file
+3. Executes `CREATE TABLE IF NOT EXISTS` statements for all 5 tables
+4. Executes seed data inserts (categories, products, users)
+5. Database is ready for queries
+
+---
+
+## 3. System Architecture
+
+### 3.1 High-Level Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        CLIENT (BROWSER)                          │
+│                                                                   │
+│  React 18 App (SPA)                                              │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────────────┐   │
+│  │   Pages  │ │Components│ │  Context │ │   localStorage   │   │
+│  │(8 pages) │ │  (3)     │ │ (Cart)   │ │ (cart_persistence)│   │
+│  └──────────┘ └──────────┘ └──────────┘ └──────────────────┘   │
+│        │              │            │                              │
+│        └──────────────┴────────────┘                              │
+│                         │ HTTP (JSON)                            │
+└─────────────────────────┬─────────────────────────────────────────┘
+                          │
+                          │  Vite Dev Proxy: /api → localhost:5000
+                          │  Production: Same origin static serving
+                          │
+┌─────────────────────────▼─────────────────────────────────────────┐
+│                      EXPRESS 5 API SERVER                          │
+│                                                                     │
+│  Middleware: cors(), express.json(), express.static()              │
+│                                                                     │
+│  Routes:                                                           │
+│  ┌────────────┐ ┌────────────┐ ┌──────────┐ ┌───────────┐       │
+│  │  Products  │ │ Categories │ │  Users   │ │   Orders  │       │
+│  │  5 routes  │ │  1 route   │ │ 1 route  │ │  1 route  │       │
+│  └────────────┘ └────────────┘ └──────────┘ └───────────┘       │
+│        │              │            │              │                │
+│        └──────────────┴────────────┴──────────────┘                │
+│                         │ sqlite3                                  │
+└─────────────────────────┬─────────────────────────────────────────┘
+                          │
+┌─────────────────────────▼─────────────────────────────────────────┐
+│                      SQLITE DATABASE                                │
+│                                                                     │
+│  ┌────────────┐                                                     │
+│  │ categories │──┐                                                 │
+│  └────────────┘  │   ┌──────────┐    ┌────────┐    ┌────────────┐│
+│                  ├───│ products │────│ orders │────│ order_items ││
+│  ┌────────────┐  │   └──────────┘    └────────┘    └────────────┘│
+│  │   users    │──┘         │              │                        │
+│  └────────────┘            └──────────────┘                        │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### 3.2 Request Lifecycle
+
+```
+Browser Request
+    │
+    ▼
+Navbar renders (fixed glass, cart badge)
+    │
+    ▼
+React Router matches path
+    │
+    ├── "/"          → Home.jsx      → fetch /api/products/featured
+    ├── "/shop"      → Shop.jsx      → fetch /api/products, /api/categories
+    ├── "/product/:id" → ProductDetails.jsx → fetch /api/products/:id
+    ├── "/cart"      → Cart.jsx      → read from localStorage (no API)
+    ├── "/checkout"  → Checkout.jsx  → POST /api/orders on submit
+    ├── "/account"   → Account.jsx   → fetch /api/users/1
+    ├── "/about"     → About.jsx     → static content (no API)
+    └── "/contact"   → Contact.jsx   → static content (no API)
+    │
+    ▼
+Page component renders → API response → setState → re-render
+    │
+    ▼
+Footer renders
+```
+
+### 3.3 Deployment Architecture
+
+#### Local Development
+```
+┌──────────────┐    Vite Proxy    ┌──────────────┐    SQLite    ┌───────────┐
+│  Vite Dev    │ ──────────────>  │  Express     │ ──────────>  │  cara.db  │
+│  Server:5173 │ <──────────────  │  Server:5000 │ <──────────  │           │
+└──────────────┘    JSON Resp     └──────────────┘              └───────────┘
+```
+
+#### Vercel Production
+```
+┌──────────────┐                 ┌──────────────────────┐    ┌───────────┐
+│  CDN Edge    │ ──────────────>  │  Serverless Function │ -> │ /tmp/     │
+│  (Static)    │ <──────────────  │  (api/index.js)      │    │ cara.db   │
+└──────────────┘                 └──────────────────────┘    └───────────┘
+```
+
+#### Docker Production
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                     Docker Container                                 │
+│                                                                      │
+│  ┌─────────────────────┐          ┌──────────────────────┐         │
+│  │  Static Frontend    │          │  Express Server      │         │
+│  │  (dist/index.html)  │  ◄────── │  (port 5000)         │         │
+│  └─────────────────────┘          └──────────────────────┘         │
+│                                            │                        │
+│                                     ┌──────▼───────┐               │
+│                                     │   cara.db   │               │
+│                                     └──────────────┘               │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 4. Technology Stack
+
+### 4.1 Detailed Dependency Map
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                            CARA TECH STACK                                    │
+├─────────────────┬────────────────────┬─────────────────┬────────────────────┤
+│     TIER        │   TECHNOLOGY       │    VERSION      │      PURPOSE       │
+├─────────────────┼────────────────────┼─────────────────┼────────────────────┤
+│  Frontend       │  React             │  18.x           │  UI Framework       │
+│  Framework      │  react-dom         │  18.x           │  DOM Renderer       │
+│                 │                    │                  │                      │
+│  Build Tool     │  Vite              │  4.x            │  Dev server + bundler│
+│                 │  @vitejs/plugin-react│ 4.x           │  React fast refresh  │
+│                 │                    │                  │                      │
+│  Routing        │  react-router-dom  │  7.x            │  Client-side routing │
+│                 │                    │                  │                      │
+│  Icons          │  lucide-react      │  latest         │  SVG icon components │
+│                 │                    │                  │                      │
+│  Styling        │  Vanilla CSS       │  —              │  No framework        │
+│                 │  CSS Custom Props  │  CSS Level 3    │  Theming variables   │
+│                 │                    │                  │                      │
+│  State Mgmt     │  React Context     │  Built-in       │  Cart state          │
+│                 │  + useReducer/useState│              │                      │
+│                 │                    │                  │                      │
+│  Persistence    │  localStorage      │  Web API        │  Cart across sessions│
+│                 │                    │                  │                      │
+│  Backend        │  Node.js           │  18+            │  Runtime             │
+│                 │  Express           │  5.x            │  Web framework       │
+│                 │  cors              │  latest         │  CORS middleware     │
+│                 │  dotenv            │  latest         │  Environment vars    │
+│                 │                    │                  │                      │
+│  Database       │  SQLite3           │  latest         │  Embedded database   │
+│                 │  (sqlite3 npm)     │                  │                      │
+│                 │                    │                  │                      │
+│  Container      │  Docker            │  —              │  Multi-stage build   │
+│                 │  node:18-alpine    │  18             │  Base image          │
+│                 │                    │                  │                      │
+│  Deployment     │  Vercel            │  —              │  Serverless hosting  │
+└─────────────────┴────────────────────┴─────────────────┴────────────────────┘
+```
+
+### 4.2 Frontend Dependencies (`frontend/package.json`)
+
+```json
+{
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^7.0.0",
+    "lucide-react": "^0.300.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.0.0",
+    "vite": "^4.0.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0"
+  }
+}
+```
+
+### 4.3 Backend Dependencies (`backend/package.json`)
+
+```json
+{
+  "dependencies": {
+    "express": "^5.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "sqlite3": "^5.0.0"
+  }
+}
+```
+
+---
+
+## 5. Frontend Architecture
+
+### 5.1 Directory Structure
+
+```
+frontend/src/
+├── main.jsx                 # React entry point, renders <App />
+├── App.jsx                  # Root: CartProvider + BrowserRouter + Routes
+├── index.css                # Global styles, design tokens, glassmorphism
+│
+├── context/
+│   └── CartContext.jsx       # Cart state: items, add, remove, update, clear
+│
+├── components/
+│   ├── Navbar.jsx            # Fixed top nav: brand, links, cart badge, profile
+│   ├── Footer.jsx            # Site footer: quick links, social, newsletter
+│   └── ProductCard.jsx       # Product thumbnail: image, name, price, add-to-cart
+│
+└── pages/
+    ├── Home.jsx              # Hero + Featured + Categories + Newsletter
+    ├── Shop.jsx              # Product grid + filters + pagination
+    ├── ProductDetails.jsx    # Single product view + trust badges
+    ├── Cart.jsx              # Cart items + quantity + summary
+    ├── Checkout.jsx          # 3-step: Shipping → Payment → Confirmation
+    ├── Account.jsx           # Profile sidebar + dashboard + edit form
+    ├── About.jsx             # Brand story + stats + values
+    └── Contact.jsx           # Contact info + form
+```
+
+### 5.2 Component Tree
+
+```
+<App>
+  <CartProvider>                         # Context: cart state + toast
+    <BrowserRouter>
+      <Navbar />                         # Reads: cartCount
+        ├── Logo (Link to "/")
+        ├── Nav Links (Home, Shop, About, Contact)
+        ├── Cart Icon (badge: cartCount)
+        └── User Icon (Link to "/account")
+
+      <Routes>
+        ┌─ "/" → <Home />
+        │         ├── <Hero />           # Fullscreen CTA
+        │         ├── Featured Grid      # map → <ProductCard />
+        │         ├── <CategorySection /> # 3 image cards with overlays
+        │         └── <Newsletter />     # Email signup form
+        │
+        ├─ "/shop" → <Shop />
+        │         ├── Category Filters   # Buttons: All, Men, Women, Acc.
+        │         ├── Product Grid       # map → <ProductCard />
+        │         └── Pagination         # Page numbers + prev/next
+        │
+        ├─ "/product/:id" → <ProductDetails />
+        │         ├── Product Image
+        │         ├── Product Info (name, price, description)
+        │         ├── Add to Cart Button
+        │         └── Trust Badges (Secure, Shipping, Returns)
+        │
+        ├─ "/cart" → <Cart />
+        │         ├── Cart Items (image, name, price, qty, remove)
+        │         ├── Clear All Button
+        │         └── Order Summary (subtotal, shipping, total, checkout)
+        │
+        ├─ "/checkout" → <Checkout />
+        │         ├── Progress Indicator (1→2→3)
+        │         ├── Step 1: Shipping Form
+        │         ├── Step 2: Payment Form
+        │         └── Step 3: Order Confirmation
+        │
+        ├─ "/account" → <Account />
+        │         ├── Profile Sidebar (avatar, name, role, details)
+        │         ├── Orders Card
+        │         ├── Security Card
+        │         └── Edit Profile Form
+        │
+        ├─ "/about" → <About />
+        │         ├── Brand Story + Image
+        │         ├── Stats (10k+, 50+, 100%)
+        │         └── Values Grid (Sustainability, Artisanship, Innovation)
+        │
+        └─ "/contact" → <Contact />
+                  ├── Contact Info (email, phone, address)
+                  └── Contact Form (name, email, message)
+      </Routes>
+
+      <Footer />                         # Brand, links, social, newsletter
+    </BrowserRouter>
+  </CartProvider>
+</App>
+```
+
+### 5.3 Data Fetching Patterns
+
+All pages use the **fetch-on-render** pattern with `useEffect`:
+
+```javascript
+// Pattern used across all pages
+const [data, setData] = useState(null);
+const [loading, setLoading] = useState(true);
+
+useEffect(() => {
+  fetch('/api/endpoint')
+    .then(res => res.json())
+    .then(result => {
+      setData(result.data);
+      setLoading(false);
+    })
+    .catch(err => {
+      console.error(err);
+      setLoading(false);
+    });
+}, [dependency]);
+```
+
+### 5.4 Route Definitions (App.jsx:22-31)
+
+| Path | Component | API Calls on Mount |
+|---|---|---|
+| `/` | Home.jsx | `GET /api/products/featured` |
+| `/shop` | Shop.jsx | `GET /api/products`, `GET /api/categories` |
+| `/product/:id` | ProductDetails.jsx | `GET /api/products/:id` |
+| `/cart` | Cart.jsx | None (localStorage) |
+| `/checkout` | Checkout.jsx | `POST /api/orders` on submit |
+| `/account` | Account.jsx | `GET /api/users/1` |
+| `/about` | About.jsx | None (static content) |
+| `/contact` | Contact.jsx | None (static content) |
+
+### 5.5 Key Frontend Behaviors
+
+| Behavior | Implementation | Location |
+|---|---|---|
+| Cart persistence | `localStorage` key `cara_cart`, synced via `useEffect` | CartContext.jsx:19-21 |
+| Toast notifications | State-based popup, auto-dismiss after 3s | CartContext.jsx:14-17, 57-73 |
+| Cart badge count | `cartCount` derived from `reduce` | CartContext.jsx:52 |
+| Pagination math | `currentPage`, `itemsPerPage=8`, `offset = (page-1) * 8` | Shop.jsx:16 |
+| Category filter | `selectedCategory` state, resets page to 1 | Shop.jsx:53-56 |
+| Checkout steps | `step` state (1, 2, 3), conditional rendering | Checkout.jsx:9 |
+| Loading states | Conditional rendering per page | All pages |
+| Empty states | "Your cart is empty" with CTA | Cart.jsx:9-18 |
+
+---
+
+## 6. Backend Architecture
+
+### 6.1 Server Entry Point (`backend/server.js`)
+
+The Express server handles:
+1. **Middleware:** CORS enabled, JSON body parsing
+2. **API Routes:** 8 endpoints across 4 resource domains
+3. **Static Serving:** Serves built frontend from `frontend/dist`
+4. **SPA Fallback:** Catch-all sends `index.html` for non-API routes
+
+### 6.2 Database Connection (`backend/db.js`)
+
+```javascript
+// Vercel vs local path detection
+const isVercel = process.env.VERCEL === '1';
+const dbPath = isVercel
+    ? path.resolve('/tmp', 'cara.db')    // Ephemeral on Vercel
+    : path.resolve(__dirname, 'cara.db'); // Persistent locally
+```
+
+On startup, the database is initialized by reading and executing `database.sql`, which creates tables (with `IF NOT EXISTS`) and inserts seed data.
+
+### 6.3 Vercel Serverless Entry (`api/index.js`)
+
+```javascript
+const app = require('../backend/server');  // Full Express app
+module.exports = app;                      // Exported as serverless handler
+```
+
+Vercel routes all `/api/*` requests through this function.
+
+### 6.4 Middleware Stack
+
+```
+Request
+  │
+  ├── cors()              ← Allows cross-origin requests
+  ├── express.json()       ← Parses JSON request bodies
+  ├── Route Matcher        ← Matches /api/* routes
+  ├── express.static()     ← Serves frontend/dist for non-API
+  └── Catch-all Handler    ← Sends index.html for SPA routing
+```
+
+### 6.5 Error Handling
+
+API endpoints return:
+- **Success:** `{ message: "success", data: [...] }` with status 200
+- **Error:** `{ error: err.message }` with status 400
+
+No centralized error handler is implemented; errors are handled inline per route.
+
+---
+
+## 7. Database Schema & Models
+
+### 7.1 Entity-Relationship Diagram
+
+```
+┌──────────────────┐       ┌──────────────────┐
+│    categories     │       │      users        │
+├──────────────────┤       ├──────────────────┤
+│ PK id            │       │ PK id            │
+│ name (UNIQUE)     │       │ username (UNIQUE) │
+│ description      │       │ email (UNIQUE)    │
+│ created_at       │       │ password_hash     │
+└────────┬─────────┘       │ location         │
+         │                 │ role             │
+         │                 │ created_at       │
+         │                 └────────┬─────────┘
+         │                          │
+         │  ┌──────────────────┐    │
+         │  │     products     │    │
+         │  ├──────────────────┤    │
+         └──│ FK category_id   │    │
+            │ id               │    │
+            │ name             │    │
+            │ description      │    │
+            │ price            │    │
+            │ stock_quantity   │    │
+            │ image_url        │    │
+            │ is_featured      │    │
+            │ created_at       │    │
+            └────────┬─────────┘    │
+                     │              │
+                     │  ┌──────────────────┐    ┌──────────────────┐
+                     │  │      orders      │    │   order_items    │
+                     │  ├──────────────────┤    ├──────────────────┤
+                     └──│ FK user_id       │    │ PK id            │
+                        │ id               │◄───│ FK order_id     │
+                        │ total_price      │    │ FK product_id    │
+                        │ status           │    │ quantity         │
+                        │ shipping_address │    │ price_at_purchase│
+                        │ created_at       │    └──────────────────┘
+                        └──────────────────┘
+```
+
+### 7.2 Table Definitions
+
+#### `categories`
+
+| Column | Type | Constraints | Description |
+|---|---|---|---|
+| id | INTEGER | PK, AUTOINCREMENT | Unique category identifier |
+| name | TEXT | NOT NULL, UNIQUE | Category display name |
+| description | TEXT | — | Category description |
+| created_at | DATETIME | DEFAULT CURRENT_TIMESTAMP | Record creation timestamp |
+
+**Seed Data:**
+- Men — "Premium apparel for men"
+- Women — "Elegant fashion for women"
+- Accessories — "Stylized additions to your outfit"
+
+#### `products`
+
+| Column | Type | Constraints | Description |
+|---|---|---|---|
+| id | INTEGER | PK, AUTOINCREMENT | Unique product identifier |
+| category_id | INTEGER | FK → categories(id) | Product category |
+| name | TEXT | NOT NULL | Product name |
+| description | TEXT | — | Product description |
+| price | DECIMAL(10,2) | NOT NULL | Product price |
+| stock_quantity | INTEGER | DEFAULT 0 | Available inventory |
+| image_url | TEXT | — | Unsplash image URL |
+| is_featured | BOOLEAN | DEFAULT FALSE | Featured product flag |
+| created_at | DATETIME | DEFAULT CURRENT_TIMESTAMP | Record creation timestamp |
+
+**Seed Data (8 products):**
+
+| ID | Category | Name | Price | Featured |
+|---|---|---|---|---|
+| 1 | Men | Midnight Silk Shirt | $89.99 | Yes |
+| 2 | Women | Ethereal Summer Dress | $120.00 | Yes |
+| 3 | Accessories | Titanium Chrono Watch | $250.00 | Yes |
+| 4 | Men | Urban Leather Jacket | $299.99 | Yes |
+| 5 | Women | Velvet Night Gown | $180.00 | No |
+| 6 | Men | Oxford Classic Shoes | $150.00 | No |
+| 7 | Accessories | Aviator Gold Shades | $199.00 | Yes |
+| 8 | Women | Silk Scarf Collection | $45.00 | No |
+
+#### `users`
+
+| Column | Type | Constraints | Description |
+|---|---|---|---|
+| id | INTEGER | PK, AUTOINCREMENT | Unique user identifier |
+| username | TEXT | NOT NULL, UNIQUE | Username for login |
+| email | TEXT | NOT NULL, UNIQUE | Email address |
+| password_hash | TEXT | NOT NULL | Hashed password |
+| location | TEXT | — | User's city/country |
+| role | TEXT | DEFAULT 'customer' | customer or admin |
+| created_at | DATETIME | DEFAULT CURRENT_TIMESTAMP | Registration date |
+
+**Seed Data:**
+- `ali_cara` / `ali@example.com` / `hashed_password_123` / London, UK / customer
+
+#### `orders`
+
+| Column | Type | Constraints | Description |
+|---|---|---|---|
+| id | INTEGER | PK, AUTOINCREMENT | Unique order identifier |
+| user_id | INTEGER | FK → users(id) | Ordering customer |
+| total_price | DECIMAL(10,2) | NOT NULL | Order total |
+| status | TEXT | DEFAULT 'pending' | pending/shipped/delivered/cancelled |
+| shipping_address | TEXT | — | Delivery address |
+| created_at | DATETIME | DEFAULT CURRENT_TIMESTAMP | Order placement date |
+
+#### `order_items`
+
+| Column | Type | Constraints | Description |
+|---|---|---|---|
+| id | INTEGER | PK, AUTOINCREMENT | Unique item identifier |
+| order_id | INTEGER | FK → orders(id) | Parent order |
+| product_id | INTEGER | FK → products(id) | Ordered product |
+| quantity | INTEGER | NOT NULL | Quantity ordered |
+| price_at_purchase | DECIMAL(10,2) | NOT NULL | Price at time of order |
+
+---
+
+## 8. API Reference
+
+### 8.1 Endpoint Summary
+
+| Method | Endpoint | Description | Query Params | Auth |
+|---|---|---|---|---|
+| GET | `/api/products` | List all products | `limit` (default 8), `offset` (default 0) | No |
+| GET | `/api/products/total` | Get product count | `category_id` (optional) | No |
+| GET | `/api/products/featured` | Featured products | None | No |
+| GET | `/api/products/:id` | Single product | Path param: `id` | No |
+| GET | `/api/categories` | All categories | None | No |
+| GET | `/api/products/category/:id` | Products by category | `limit`, `offset` | No |
+| GET | `/api/users/:id` | User profile | Path param: `id` | No |
+| POST | `/api/orders` | Create order | Body: `user_id`, `total_price`, `shipping_address`, `items` | No |
+
+### 8.2 Detailed Endpoint Specifications
+
+#### `GET /api/products`
+
+**Description:** Retrieves paginated list of all products.
+
+**Query Parameters:**
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `limit` | integer | 8 | Number of products per page |
+| `offset` | integer | 0 | Number of products to skip |
+
+**Response (200):**
+```json
+{
+  "message": "success",
+  "data": [
+    {
+      "id": 1,
+      "category_id": 1,
+      "name": "Midnight Silk Shirt",
+      "description": "A luxurious black silk shirt for evening wear.",
+      "price": 89.99,
+      "stock_quantity": 50,
+      "image_url": "https://images.unsplash.com/...",
+      "is_featured": 1,
+      "created_at": "2026-01-01 00:00:00"
+    }
+  ]
+}
+```
+
+**Error (400):** `{ "error": "<error message>" }`
+
+---
+
+#### `GET /api/products/total`
+
+**Description:** Returns total count of products, optionally filtered by category.
+
+**Query Parameters:**
+| Parameter | Type | Description |
+|---|---|---|
+| `category_id` | integer (optional) | Filter by category |
+
+**Response (200):**
+```json
+{
+  "message": "success",
+  "total": 8
+}
+```
+
+---
+
+#### `GET /api/products/featured`
+
+**Description:** Returns all products marked as featured (`is_featured = 1`).
+
+**Response (200):**
+```json
+{
+  "message": "success",
+  "data": [
+    { "id": 1, "name": "Midnight Silk Shirt", ... },
+    { "id": 2, "name": "Ethereal Summer Dress", ... },
+    { "id": 3, "name": "Titanium Chrono Watch", ... },
+    { "id": 4, "name": "Urban Leather Jacket", ... },
+    { "id": 7, "name": "Aviator Gold Shades", ... }
+  ]
+}
+```
+
+---
+
+#### `GET /api/products/:id`
+
+**Description:** Returns a single product by its ID.
+
+**Path Parameters:**
+| Parameter | Type | Description |
+|---|---|---|
+| `id` | integer | Product ID |
+
+**Response (200):**
+```json
+{
+  "message": "success",
+  "data": {
+    "id": 1,
+    "category_id": 1,
+    "name": "Midnight Silk Shirt",
+    "description": "A luxurious black silk shirt for evening wear.",
+    "price": 89.99,
+    "stock_quantity": 50,
+    "image_url": "https://images.unsplash.com/...",
+    "is_featured": 1,
+    "created_at": "2026-01-01 00:00:00"
+  }
+}
+```
+
+---
+
+#### `GET /api/categories`
+
+**Description:** Returns all product categories.
+
+**Response (200):**
+```json
+{
+  "message": "success",
+  "data": [
+    { "id": 1, "name": "Men", "description": "Premium apparel for men", "created_at": "..." },
+    { "id": 2, "name": "Women", "description": "Elegant fashion for women", "created_at": "..." },
+    { "id": 3, "name": "Accessories", "description": "Stylized additions to your outfit", "created_at": "..." }
+  ]
+}
+```
+
+---
+
+#### `GET /api/products/category/:id`
+
+**Description:** Returns paginated products filtered by category.
+
+**Path Parameters:**
+| Parameter | Type | Description |
+|---|---|---|
+| `id` | integer | Category ID |
+
+**Query Parameters:**
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `limit` | integer | 8 | Products per page |
+| `offset` | integer | 0 | Products to skip |
+
+**Response (200):** Same structure as `GET /api/products`.
+
+---
+
+#### `GET /api/users/:id`
+
+**Description:** Returns user profile (excludes `password_hash`).
+
+**Path Parameters:**
+| Parameter | Type | Description |
+|---|---|---|
+| `id` | integer | User ID |
+
+**Response (200):**
+```json
+{
+  "message": "success",
+  "data": {
+    "id": 1,
+    "username": "ali_cara",
+    "email": "ali@example.com",
+    "location": "London, UK",
+    "role": "customer",
+    "created_at": "2026-01-01 00:00:00"
+  }
+}
+```
+
+**Note:** The SQL query explicitly selects only non-sensitive fields:
+```sql
+SELECT id, username, email, location, role, created_at FROM users WHERE id = ?
+```
+
+---
+
+#### `POST /api/orders`
+
+**Description:** Creates a new order record.
+
+**Request Body:**
+```json
+{
+  "user_id": 1,
+  "total_price": 329.99,
+  "shipping_address": "123 Main St, London, UK",
+  "items": [
+    { "id": 1, "quantity": 2, "price": 89.99 },
+    { "id": 4, "quantity": 1, "price": 150.00 }
+  ]
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `user_id` | integer | ID of the ordering user |
+| `total_price` | number | Total order amount |
+| `shipping_address` | string | Delivery address |
+| `items` | array | Array of item objects (stored but not inserted into `order_items` in current implementation) |
+
+**Response (200):**
+```json
+{
+  "message": "Order placed successfully",
+  "order_id": 1
+}
+```
+
+**Note:** The current implementation inserts only the order record. Order items are received but not processed into the `order_items` table. This is noted as a placeholder for future enhancement.
+
+---
+
+## 9. Component Library
+
+### 9.1 Navbar (`components/Navbar.jsx`)
+
+**Purpose:** Fixed-position, glassmorphism navigation bar
+
+**Dependencies:** `react-router-dom`, `lucide-react`, `CartContext`
+
+**Props:** None (reads from context)
+
+**Internal State:** None (reads `cartCount` from context)
+
+**Structure:**
+```
+┌──────────────────────────────────────────────────────────────┐
+│  CARA    Home  Shop  About  Contact     🛍️(3)  👤  ☰     │
+└──────────────────────────────────────────────────────────────┘
+  ← Brand →  ←─── Nav Links ──→    ←── Icons ──→
+```
+
+**Key Styles:**
+- Fixed at top, centered with `left: 50%; transform: translateX(-50%)`
+- Glass effect via `.glass` class
+- `z-index: 1000` to overlay content
+
+**Behavior:**
+- Cart icon shows badge with `cartCount` when > 0
+- Badge styled with gold background and pill shape
+- Mobile menu icon (☰) rendered but not functional
+
+---
+
+### 9.2 Footer (`components/Footer.jsx`)
+
+**Purpose:** Site-wide footer with links, social icons, newsletter
+
+**Dependencies:** `lucide-react`, `react-router-dom`
+
+**Props:** None
+
+**Structure:**
+```
+┌──────────────────────────────────────────────────────────────┐
+│  CARA         Quick Links    Follow Us       Newsletter      │
+│  Premium      Home           [Insta] [X] [FB] [input][→]   │
+│  fashion...   About                                       │
+│               Contact                                     │
+├──────────────────────────────────────────────────────────────┤
+│          © 2026 CARA Clothing Brand. All rights reserved.    │
+└──────────────────────────────────────────────────────────────┘
+```
+
+**Key Styles:**
+- Glass effect with top border radius only
+- Responsive grid: `grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))`
+
+---
+
+### 9.3 ProductCard (`components/ProductCard.jsx`)
+
+**Purpose:** Reusable product display card for grids
+
+**Dependencies:** `react-router-dom`, `CartContext`
+
+**Props:**
+| Prop | Type | Description |
+|---|---|---|
+| `product` | Object | Product data: id, name, description, price, image_url |
+
+**Structure:**
+```
+┌──────────────────────────┐
+│  ┌────────────────────┐  │
+│  │    Product Image    │  │  ← Link to /product/:id
+│  └────────────────────┘  │
+│  Product Name            │
+│  Product Description     │
+│  $89.99    [Add to Cart] │  ← Gold price + Primary button
+└──────────────────────────┘
+```
+
+**Behavior:**
+- Entire card has glass effect with `padding: 1rem`
+- Image wrapped in `<Link to={/product/${product.id}}>` for navigation
+- "Add to Cart" button calls `addToCart(product)` with `stopPropagation` to prevent link navigation
+- Hover effect on image via `.product-image` class
+- Card itself uses `transition: var(--transition)` with hover cursor pointer
+
+---
+
+## 10. State Management & Data Flow
+
+### 10.1 CartContext Architecture
+
+**File:** `frontend/src/context/CartContext.jsx`
+
+**Pattern:** React Context + `useState` + `useEffect` for persistence
+
+```
+                   ┌──────────────────────┐
+                   │   CartProvider        │
+                   │  wraps entire app     │
+                   └──────────┬───────────┘
+                              │
+              ┌───────────────┼───────────────┐
+              │               │               │
+         ┌────▼────┐   ┌─────▼─────┐   ┌─────▼────┐
+         │  State  │   │  Effects  │   │ Derived  │
+         │         │   │           │   │  Values  │
+         │cartItems│   │localStor- │   │cartTotal │
+         │toast    │   │age sync   │   │cartCount │
+         └─────────┘   └───────────┘   └──────────┘
+              │
+              ▼
+     ┌────────────────┐
+     │  Exposed via   │
+     │  useCart()     │
+     │  hook          │
+     └────────────────┘
+              │
+     ┌────────┼────────┬──────────────┐
+     │        │        │              │
+  Navbar   ProductCard  Cart       Checkout
+  (badge)  (add)       (manage)    (clear)
+```
+
+### 10.2 Context API
+
+```javascript
+const {
+  cartItems,       // Array of { id, name, price, image_url, quantity }
+  addToCart,       // (product) => void
+  removeFromCart,  // (productId) => void
+  updateQuantity,  // (productId, quantity) => void
+  clearCart,       // () => void
+  cartTotal,       // Number (computed)
+  cartCount,       // Number (computed)
+  toast            // String | null
+} = useCart();
+```
+
+### 10.3 State Functions
+
+#### `addToCart(product)`
+- Checks if product already exists in `cartItems`
+- If exists: increments `quantity` by 1
+- If new: appends with `quantity: 1`
+- Triggers toast: `"${product.name} added to cart!"`
+
+#### `removeFromCart(productId)`
+- Filters out item matching `productId` from `cartItems`
+
+#### `updateQuantity(productId, quantity)`
+- Guards: returns early if `quantity < 1`
+- Maps over items, updates matching item's quantity
+
+#### `clearCart()`
+- Sets `cartItems` to empty array `[]`
+
+#### `cartTotal` (derived)
+```javascript
+cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
+```
+
+#### `cartCount` (derived)
+```javascript
+cartItems.reduce((count, item) => count + item.quantity, 0)
+```
+
+### 10.4 Toast System
+
+- **State:** `toast` (string or null)
+- **Trigger:** `showToast(message)` sets toast, `setTimeout` clears after 3000ms
+- **Rendering:** Fixed position bottom-right, gold background, dark text
+- **Animation:** CSS `fadeIn` animation
+- **Placement:** Rendered inside `CartProvider` after children
+
+### 10.5 Persistence Flow
+
+```
+Component calls addToCart(product)
+        │
+        ▼
+setCartItems(prev => updated)
+        │
+        ▼
+useEffect fires [cartItems dependency]
+        │
+        ▼
+localStorage.setItem('cara_cart', JSON.stringify(cartItems))
+        │
+        ▼
+On page reload:
+        │
+        ▼
+useState initializer reads localStorage:
+  const savedCart = localStorage.getItem('cara_cart')
+  return savedCart ? JSON.parse(savedCart) : []
+```
+
+### 10.6 Data Flow by Page
+
+| Page | Data Source | Loading State | Error State |
+|---|---|---|---|
+| Home | `GET /api/products/featured` | "Loading elegance..." | `console.error` only |
+| Shop | `GET /api/products`, `GET /api/categories` | "Refining selection..." | `console.error` only |
+| ProductDetails | `GET /api/products/:id` | "Loading details..." | "Product not found." |
+| Cart | localStorage | N/A | Empty state UI |
+| Checkout | CartContext + `POST /api/orders` | "Processing..." | `console.error` only |
+| Account | `GET /api/users/1` | "Loading your profile..." | "User not found." |
+| About | Static content | N/A | N/A |
+| Contact | Static content | N/A | N/A |
+
+---
+
+## 11. Design System & Theming
+
+### 11.1 CSS Custom Properties (`index.css:1-11`)
+
+```css
+:root {
+  --primary: #c9a66b;           /* Gold/Champagne — CTAs, accents */
+  --secondary: #1a1a1a;          /* Charcoal — text on gold */
+  --bg-dark: #0a0a0a;           /* Near-black — page background */
+  --text-light: #f5f5f5;        /* Off-white — body text */
+  --text-muted: #a0a0a0;        /* Grey — secondary text, labels */
+  --accent: #e5c9a0;            /* Light gold — hover states */
+  --glass: rgba(255,255,255,0.05);      /* Glass surface */
+  --glass-border: rgba(255,255,255,0.1);/* Glass border */
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth */
+}
+```
+
+### 11.2 Color Palette
+
+```
+Primary Gold    #c9a66b    ████████  Used for: buttons, prices, accents, brand
+Accent Gold     #e5c9a0    ████████  Used for: hover states
+Charcoal        #1a1a1a    ████████  Used for: text on gold
+Near Black      #0a0a0a    ████████  Used for: page backgrounds
+Off White       #f5f5f5    ████████  Used for: body text
+Muted Grey      #a0a0a0    ████████  Used for: secondary text
+Glass White     rgba(255,255,255,0.05)  ████████  Glass surfaces
+```
+
+### 11.3 Glassmorphism Utility (`.glass` class)
+
+```css
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+}
+```
+
+Applied to: Navbar, product cards, category cards, order summary, checkout forms, profile cards, footer.
+
+### 11.4 Typography
+
+| Usage | Font | Weight | Size |
+|---|---|---|---|
+| Headings | Playfair Display (serif) | Bold | 2rem–5rem |
+| Body | Inter (sans-serif) | 400–600 | 0.9rem–1.2rem |
+| Brand/Logo | Playfair Display (serif) | Bold | 1.5rem–2rem |
+
+**Font Loading:** Google Fonts, linked in `frontend/index.html`
+
+### 11.5 Button System
+
+```
+.btn              Base: padding 0.8rem 2rem, border-radius 50px, font-weight 600
+.btn-primary      Gold bg (#c9a66b), dark text, hover lift + glow shadow
+.btn-outline      Transparent bg, gold border + text, hover fills gold
+```
+
+### 11.6 Animations
+
+```css
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeIn 0.8s ease forwards; }
+```
+
+Applied to: Hero section, checkout steps, product detail view.
+
+### 11.7 Spacing & Layout
+
+- **Page max-width:** 1200px (`.container`)
+- **Padding:** `0 2rem` horizontal on container
+- **Page top padding:** `150px` to clear fixed navbar (100px + gap)
+- **Section padding:** `100px` vertical for major sections
+- **Card gaps:** `2.5rem` in product grids, `2rem` in category grids
+- **Border radius:** `12px` glass, `8px` images, `50px` buttons, `50%` badges
+
+---
+
+## 12. Routing & Navigation
+
+### 12.1 Route Configuration
+
+Defined in `App.jsx:22-31` using React Router DOM v7:
+
+```jsx
+<Routes>
+  <Route path="/"           element={<Home />} />
+  <Route path="/shop"       element={<Shop />} />
+  <Route path="/product/:id" element={<ProductDetails />} />
+  <Route path="/cart"       element={<Cart />} />
+  <Route path="/checkout"   element={<Checkout />} />
+  <Route path="/account"    element={<Account />} />
+  <Route path="/about"      element={<About />} />
+  <Route path="/contact"    element={<Contact />} />
+</Routes>
+```
+
+### 12.2 Navigation Links
+
+| From | To | Component |
+|---|---|---|
+| Navbar brand | `/` | Link |
+| Navbar "Home" | `/` | Link |
+| Navbar "Shop" | `/shop` | Link |
+| Navbar "About" | `/about` | Link |
+| Navbar "Contact" | `/contact` | Link |
+| Navbar cart icon | `/cart` | Link |
+| Navbar user icon | `/account` | Link |
+| Hero "Shop Collection" | `/shop` | Link |
+| Hero "Our Story" | `/about` | Link |
+| Category cards | `/shop` | Link |
+| "View All Products" | `/shop` | Link |
+| Product card image | `/product/:id` | Link |
+| Product card name | `/product/:id` | Link (implicit via card Link) |
+| "Go Shopping" (empty cart) | `/shop` | Link |
+| "Checkout" (cart summary) | `/checkout` | Link |
+| Footer "Home" | `/` | Link |
+| Footer "Shop" | `/shop` | Link |
+| Footer "About Us" | `/about` | Link |
+| Footer "Contact" | `/contact` | Link |
+| "Continue Shopping" (confirmation) | `/shop` | navigate() |
+| "Back to Shop" (product details) | `/shop` | Link |
+
+### 12.3 Navigation Guard
+
+**Checkout page:** If cart is empty and not on confirmation step, auto-redirects to `/cart`:
+```javascript
+if (cartItems.length === 0 && step !== 3) {
+  navigate('/cart');
+  return null;
+}
+```
+
+---
+
+## 13. Deployment Guide
+
+### 13.1 Local Development Setup
+
+**Prerequisites:**
+- Node.js v14+
+- npm
+
+**Step 1: Clone Repository**
+```bash
+git clone https://github.com/Aliyan-cmd/CARA.git
+cd CARA
+```
+
+**Step 2: Install Backend Dependencies**
+```bash
+cd backend
+npm install
+```
+
+**Step 3: Install Frontend Dependencies**
+```bash
+cd ../frontend
+npm install
+```
+
+**Step 4: Start Backend Server**
+```bash
+cd ../backend
+npm start
+# Server running on http://localhost:5000
+```
+
+**Step 5: Start Frontend Dev Server** (separate terminal)
+```bash
+cd frontend
+npm run dev
+# Application available at http://localhost:5173
+```
+
+**Vite Proxy Configuration** (`frontend/vite.config.js`):
+```javascript
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    proxy: {
+      '/api': 'http://localhost:5000'
+    }
+  }
+});
+```
+
+### 13.2 Docker Deployment
+
+**Dockerfile** (multi-stage build):
+
+```dockerfile
+# Stage 1: Build frontend
+FROM node:18-alpine AS builder
+WORKDIR /app/frontend
+COPY frontend/package*.json ./
+RUN npm install
+COPY frontend/ ./
+RUN npm run build
+
+# Stage 2: Backend + static serve
+FROM node:18-alpine
+WORKDIR /app
+COPY backend/package*.json ./
+RUN npm install --production
+COPY backend/ ./
+COPY --from=builder /app/frontend/dist ./frontend/dist
+EXPOSE 5000
+CMD ["npm", "start"]
+```
+
+**Build & Run:**
+```bash
+docker build -t cara .
+docker run -p 5000:5000 cara
+# → http://localhost:5000
+```
+
+### 13.3 Vercel Deployment
+
+**Configuration** (`vercel.json`):
+```json
+{
+  "routes": [
+    { "source": "/api/(.*)", "dest": "/api" }
+  ]
+}
+```
+
+**Steps:**
+1. Push repository to GitHub
+2. Connect repository to Vercel
+3. Vercel auto-detects `vercel.json` configuration
+4. Build command: `npm run build` (runs frontend build)
+5. Output directory: `frontend/dist`
+6. Serverless function: `api/index.js` handles `/api/*` routes
+
+**Important Caveats:**
+- SQLite database is stored in `/tmp` and is **ephemeral**
+- Data resets on each function cold start
+- Not suitable for production traffic
+- Recommended to migrate to PostgreSQL or MongoDB for production
+
+### 13.4 Environment Variables
+
+| Variable | Default | Description |
+|---|---|---|
+| `PORT` | 5000 | Server port |
+| `VERCEL` | — | Set to "1" on Vercel (detected automatically) |
+
+---
+
+## 14. Development Guide
+
+### 14.1 Project Conventions
+
+| Convention | Standard |
+|---|---|
+| JavaScript Style | ES6+ with JSX |
+| React Component Style | Functional components with Hooks |
+| File Naming | PascalCase for components, camelCase for utilities |
+| CSS Units | rem for spacing, % for widths, px for borders |
+| API Response Format | `{ message, data }` for success |
+| Error Handling | Inline try/catch per request |
+| Git Strategy | Direct commits to main |
+
+### 14.2 Adding a New Page
+
+1. Create file in `frontend/src/pages/`
+2. Import it in `App.jsx`
+3. Add a `<Route>` entry
+4. Add nav link in `Navbar.jsx` (if needed)
+5. Add footer link in `Footer.jsx` (if needed)
+
+### 14.3 Adding a New API Endpoint
+
+1. Define route in `backend/server.js`
+2. Use `db.all()`, `db.get()`, or `db.run()` for SQLite queries
+3. Return JSON response: `res.json({ message: "success", data: ... })`
+4. Handle errors: `res.status(400).json({ error: err.message })`
+
+### 14.4 Adding a New Product to Seed Data
+
+Edit `database.sql` and add an `INSERT INTO products` row:
+```sql
+INSERT INTO products (category_id, name, description, price, stock_quantity, image_url, is_featured)
+VALUES (1, 'Product Name', 'Product description.', 99.99, 50, 'https://image.url', 0);
+```
+
+---
+
+## 15. Security Considerations
+
+### 15.1 Current Security Posture
+
+| Aspect | Status | Notes |
+|---|---|---|
+| Password Hashing | ⚠️ Placeholder | Seed data has `hashed_password_123` — not a real hash |
+| Authentication | ❌ Not implemented | User is hardcoded as ID 1 |
+| Authorization | ❌ Not implemented | No role-based access control |
+| Input Validation | ⚠️ Minimal | No server-side validation on POST body |
+| SQL Injection | ✅ Safe | Parameterized queries used throughout |
+| CORS | ✅ Enabled | Open CORS (all origins) |
+| XSS | ✅ Partial | React auto-escapes; no dangerous `dangerouslySetInnerHTML` |
+| HTTPS | ✅ Via Vercel | TLS termination at CDN edge |
+
+### 15.2 SQL Injection Protection
+
+All database queries use **parameterized statements**:
+
+```javascript
+// ✅ Safe — parameters passed separately
+db.all('SELECT * FROM products WHERE id = ?', [id], callback);
+
+// ❌ Unsafe — never do this
+db.all(`SELECT * FROM products WHERE id = ${id}`, callback);
+```
+
+### 15.3 Recommendations for Production
+
+1. **Authentication:** Implement JWT-based login/register with bcrypt password hashing
+2. **Authorization:** Add middleware to protect routes based on user role
+3. **Input Validation:** Use express-validator or joi to validate request bodies
+4. **Rate Limiting:** Add express-rate-limit to prevent abuse
+5. **Helmet:** Add helmet middleware for security headers
+6. **CORS Restriction:** Limit to specific origins in production
+7. **Environment Secrets:** Use proper secret management for JWT keys and API tokens
+
+---
+
+## 16. Performance Optimization
+
+### 16.1 Current Performance Profile
+
+| Metric | Assessment |
+|---|---|
+| Bundle Size | Small (no large libraries) |
+| API Response Time | Fast (SQLite local) |
+| Image Loading | Unsplash CDN (fast, no lazy loading) |
+| State Updates | Efficient (Context avoids prop drilling) |
+| Re-renders | Minimal (no unnecessary providers) |
+
+### 16.2 Optimization Opportunities
+
+1. **Image Lazy Loading:** Add `loading="lazy"` to product images
+2. **Code Splitting:** Use `React.lazy()` and `Suspense` for page components
+3. **Memoization:** Use `React.memo` on `ProductCard` to prevent unnecessary re-renders
+4. **API Caching:** Add client-side caching for product/category data
+5. **Pagination Optimization:** Consider cursor-based pagination for large datasets
+6. **Font Optimization:** Self-host Google Fonts to reduce DNS lookups
+
+---
+
+## 17. Testing Strategy
+
+### 17.1 Current State
+
+No tests are currently implemented. The project has no test runner configured.
+
+### 17.2 Recommended Test Stack
+
+| Test Type | Tool | Target |
+|---|---|---|
+| Unit Tests | Vitest (bundled with Vite ecosystem) | Utility functions, context logic |
+| Component Tests | React Testing Library | UI components, interactions |
+| Integration Tests | Supertest + Vitest | API endpoints |
+| E2E Tests | Playwright or Cypress | Full user flows |
+
+### 17.3 Test Priority Matrix
+
+| Priority | Test Area | Example |
+|---|---|---|
+| P0 | Cart Context | `addToCart`, `removeFromCart`, persistence |
+| P0 | API endpoints | Product CRUD, order creation |
+| P1 | Navigation | Route rendering, link correctness |
+| P1 | Checkout flow | Step progression, form validation |
+| P2 | UI components | ProductCard rendering, Navbar badge |
+| P3 | E2E flows | Full browse → add → checkout cycle |
+
+---
+
+## 18. Future Roadmap
+
+### 18.1 Phase 1: Foundation (Completed ✅)
+- [x] React frontend with Vite
+- [x] Express backend with SQLite
+- [x] Glassmorphism design system
+- [x] Product catalog with pagination
+- [x] Shopping cart with localStorage
+- [x] Multi-step checkout
+- [x] Docker containerization
+- [x] Vercel deployment config
+
+### 18.2 Phase 2: Production Readiness (🔜 Next)
+- [ ] User authentication (JWT + bcrypt)
+- [ ] Real payment integration (Stripe)
+- [ ] Database migration (SQLite → PostgreSQL)
+- [ ] Input validation (express-validator)
+- [ ] Error boundaries (React)
+- [ ] Test suite (Vitest + RTL)
+- [ ] Security headers (helmet)
+
+### 18.3 Phase 3: Feature Expansion
+- [ ] Admin dashboard
+- [ ] Product image upload
+- [ ] Order history & tracking
+- [ ] Wishlist functionality
+- [ ] Product search
+- [ ] Product reviews & ratings
+- [ ] Size guide & selector
+- [ ] Multi-currency support
+- [ ] Internationalization (i18n)
+
+### 18.4 Phase 4: Advanced
+- [ ] TypeScript migration
+- [ ] Server-side rendering (Next.js)
+- [ ] CMS integration (Sanity/Strapi)
+- [ ] CI/CD pipeline (GitHub Actions)
+- [ ] Performance monitoring
+- [ ] SEO optimization
+- [ ] PWA support
+- [ ] Mobile app (React Native)
+
+---
+
+## 19. Appendix: Code Examples
+
+### 19.1 Complete Cart Context
+
+```javascript
+import React, { createContext, useState, useContext, useEffect } from 'react';
+
+const CartContext = createContext();
+
+export const useCart = () => useContext(CartContext);
+
+export const CartProvider = ({ children }) => {
+    const [cartItems, setCartItems] = useState(() => {
+        const savedCart = localStorage.getItem('cara_cart');
+        return savedCart ? JSON.parse(savedCart) : [];
+    });
+    const [toast, setToast] = useState(null);
+
+    const showToast = (message) => {
+        setToast(message);
+        setTimeout(() => setToast(null), 3000);
+    };
+
+    useEffect(() => {
+        localStorage.setItem('cara_cart', JSON.stringify(cartItems));
+    }, [cartItems]);
+
+    const addToCart = (product) => {
+        setCartItems(prevItems => {
+            const existingItem = prevItems.find(item => item.id === product.id);
+            if (existingItem) {
+                return prevItems.map(item =>
+                    item.id === product.id
+                        ? { ...item, quantity: item.quantity + 1 }
+                        : item
+                );
+            }
+            return [...prevItems, { ...product, quantity: 1 }];
+        });
+        showToast(`${product.name} added to cart!`);
+    };
+
+    const removeFromCart = (productId) => {
+        setCartItems(prevItems =>
+            prevItems.filter(item => item.id !== productId)
+        );
+    };
+
+    const updateQuantity = (productId, quantity) => {
+        if (quantity < 1) return;
+        setCartItems(prevItems =>
+            prevItems.map(item =>
+                item.id === productId ? { ...item, quantity } : item
+            )
+        );
+    };
+
+    const clearCart = () => setCartItems([]);
+
+    const cartTotal = cartItems.reduce(
+        (total, item) => total + item.price * item.quantity, 0
+    );
+    const cartCount = cartItems.reduce(
+        (count, item) => count + item.quantity, 0
+    );
+
+    return (
+        <CartContext.Provider value={{
+            cartItems, addToCart, removeFromCart,
+            updateQuantity, clearCart, cartTotal, cartCount, toast
+        }}>
+            {children}
+            {toast && (
+                <div style={{
+                    position: 'fixed',
+                    bottom: '2rem',
+                    right: '2rem',
+                    background: 'var(--primary)',
+                    color: 'var(--secondary)',
+                    padding: '1rem 2rem',
+                    borderRadius: '50px',
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+                    zIndex: 9999,
+                    fontWeight: 'bold',
+                    animation: 'fadeIn 0.3s ease'
+                }}>
+                    {toast}
+                </div>
+            )}
+        </CartContext.Provider>
+    );
+};
+```
+
+### 19.2 Express Server with All Routes
+
+```javascript
+const express = require('express');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const path = require('path');
+const db = require('./db');
+
+dotenv.config();
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+app.use(cors());
+app.use(express.json());
+
+// ─── PRODUCTS ───────────────────────────────────────────────
+
+app.get('/api/products', (req, res) => {
+    const limit = parseInt(req.query.limit) || 8;
+    const offset = parseInt(req.query.offset) || 0;
+    const sql = 'SELECT * FROM products LIMIT ? OFFSET ?';
+    db.all(sql, [limit, offset], (err, rows) => {
+        if (err) return res.status(400).json({ error: err.message });
+        res.json({ message: 'success', data: rows });
+    });
+});
+
+app.get('/api/products/total', (req, res) => {
+    const categoryId = req.query.category_id;
+    let sql = 'SELECT COUNT(*) as total FROM products';
+    let params = [];
+    if (categoryId) {
+        sql += ' WHERE category_id = ?';
+        params.push(categoryId);
+    }
+    db.get(sql, params, (err, row) => {
+        if (err) return res.status(400).json({ error: err.message });
+        const total = row
+            ? (row.total !== undefined ? row.total : row['COUNT(*)'])
+            : 0;
+        res.json({ message: 'success', total });
+    });
+});
+
+app.get('/api/products/featured', (req, res) => {
+    const sql = 'SELECT * FROM products WHERE is_featured = 1';
+    db.all(sql, [], (err, rows) => {
+        if (err) return res.status(400).json({ error: err.message });
+        res.json({ message: 'success', data: rows });
+    });
+});
+
+app.get('/api/products/:id', (req, res) => {
+    const sql = 'SELECT * FROM products WHERE id = ?';
+    db.get(sql, [req.params.id], (err, row) => {
+        if (err) return res.status(400).json({ error: err.message });
+        res.json({ message: 'success', data: row });
+    });
+});
+
+app.get('/api/products/category/:id', (req, res) => {
+    const limit = parseInt(req.query.limit) || 8;
+    const offset = parseInt(req.query.offset) || 0;
+    const sql = 'SELECT * FROM products WHERE category_id = ? LIMIT ? OFFSET ?';
+    db.all(sql, [req.params.id, limit, offset], (err, rows) => {
+        if (err) return res.status(400).json({ error: err.message });
+        res.json({ message: 'success', data: rows });
+    });
+});
+
+// ─── CATEGORIES ────────────────────────────────────────────
+
+app.get('/api/categories', (req, res) => {
+    const sql = 'SELECT * FROM categories';
+    db.all(sql, [], (err, rows) => {
+        if (err) return res.status(400).json({ error: err.message });
+        res.json({ message: 'success', data: rows });
+    });
+});
+
+// ─── USERS ────────────────────────────────────────────────
+
+app.get('/api/users/:id', (req, res) => {
+    const sql = 'SELECT id, username, email, location, role, created_at FROM users WHERE id = ?';
+    db.get(sql, [req.params.id], (err, row) => {
+        if (err) return res.status(400).json({ error: err.message });
+        res.json({ message: 'success', data: row });
+    });
+});
+
+// ─── ORDERS ───────────────────────────────────────────────
+
+app.post('/api/orders', (req, res) => {
+    const { user_id, total_price, shipping_address, items } = req.body;
+    const sql = 'INSERT INTO orders (user_id, total_price, shipping_address) VALUES (?, ?, ?)';
+    db.run(sql, [user_id, total_price, shipping_address], function(err) {
+        if (err) return res.status(400).json({ error: err.message });
+        res.json({ message: 'Order placed successfully', order_id: this.lastID });
+    });
+});
+
+// ─── STATIC FILES & SPA FALLBACK ──────────────────────────
+
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+app.use((req, res, next) => {
+    if (!req.path.startsWith('/api')) {
+        res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+    } else {
+        next();
+    }
+});
+
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+
+module.exports = app;
+```
+
+### 19.3 Database Initialization (db.js)
+
+```javascript
+const sqlite3 = require('sqlite3').verbose();
+const fs = require('fs');
+const path = require('path');
+
+const isVercel = process.env.VERCEL === '1';
+const dbPath = isVercel
+    ? path.resolve('/tmp', 'cara.db')
+    : path.resolve(__dirname, 'cara.db');
+const schemaPath = path.resolve(__dirname, '../database.sql');
+
+const db = new sqlite3.Database(dbPath, (err) => {
+    if (err) {
+        console.error('Error opening database', err.message);
+    } else {
+        console.log(`Connected to the SQLite database at ${dbPath}`);
+        initializeDatabase();
+    }
+});
+
+function initializeDatabase() {
+    const schema = fs.readFileSync(schemaPath, 'utf8');
+    db.exec(schema, (err) => {
+        if (err) {
+            console.error('Error initializing database', err.message);
+        } else {
+            console.log('Database initialized successfully.');
+        }
+    });
+}
+
+module.exports = db;
+```
+
+### 19.4 Complete SQL Schema
+
+```sql
+CREATE TABLE IF NOT EXISTS categories (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE,
+    description TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS products (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    category_id INTEGER,
+    name TEXT NOT NULL,
+    description TEXT,
+    price DECIMAL(10, 2) NOT NULL,
+    stock_quantity INTEGER DEFAULT 0,
+    image_url TEXT,
+    is_featured BOOLEAN DEFAULT FALSE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES categories(id)
+);
+
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL UNIQUE,
+    email TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    location TEXT,
+    role TEXT DEFAULT 'customer',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS orders (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    total_price DECIMAL(10, 2) NOT NULL,
+    status TEXT DEFAULT 'pending',
+    shipping_address TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS order_items (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    order_id INTEGER,
+    product_id INTEGER,
+    quantity INTEGER NOT NULL,
+    price_at_purchase DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(id),
+    FOREIGN KEY (product_id) REFERENCES products(id)
+);
+
+-- Seed Data
+INSERT INTO categories (name, description) VALUES
+('Men', 'Premium apparel for men'),
+('Women', 'Elegant fashion for women'),
+('Accessories', 'Stylized additions to your outfit');
+
+INSERT INTO products (category_id, name, description, price, stock_quantity, image_url, is_featured) VALUES
+(1, 'Midnight Silk Shirt', 'A luxurious black silk shirt for evening wear.', 89.99, 50, 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80', 1),
+(2, 'Ethereal Summer Dress', 'Lightweight and breezy white dress.', 120.00, 30, 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=800&q=80', 1),
+(3, 'Titanium Chrono Watch', 'Durable and stylish timepiece.', 250.00, 15, 'https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&w=800&q=80', 1),
+(1, 'Urban Leather Jacket', 'Premium calfskin leather with a sleek matte finish.', 299.99, 10, 'https://images.unsplash.com/photo-1521223890158-f9f7c3d5bab3?auto=format&fit=crop&w=800&q=80', 1),
+(2, 'Velvet Night Gown', 'Deep emerald velvet for high-profile events.', 180.00, 20, 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=80', 0),
+(1, 'Oxford Classic Shoes', 'Handcrafted leather shoes for the professional.', 150.00, 25, 'https://images.unsplash.com/photo-1533867617858-e7b97e060509?auto=format&fit=crop&w=800&q=80', 0),
+(3, 'Aviator Gold Shades', 'Classic aviator design with 24k gold plating.', 199.00, 40, 'https://images.unsplash.com/photo-1511499767390-91f19760a0ac?auto=format&fit=crop&w=800&q=80', 1),
+(2, 'Silk Scarf Collection', 'Hand-painted silk scarves from Italy.', 45.00, 100, 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80', 0);
+
+INSERT INTO users (username, email, password_hash, location, role) VALUES
+('ali_cara', 'ali@example.com', 'hashed_password_123', 'London, UK', 'customer');
+```
+
+### 19.5 ProductCard Component (Complete)
+
+```javascript
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
+
+const ProductCard = ({ product }) => {
+  const { addToCart } = useCart();
+
+  return (
+    <div className="glass"
+      style={{
+        padding: '1rem',
+        transition: 'var(--transition)',
+        cursor: 'pointer'
+      }}
+    >
+      <Link to={`/product/${product.id}`}>
+        <div style={{
+          height: '300px',
+          overflow: 'hidden',
+          borderRadius: '8px',
+          marginBottom: '1rem'
+        }}>
+          <img
+            src={product.image_url}
+            alt={product.name}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              transition: 'var(--transition)'
+            }}
+            className="product-image"
+          />
+        </div>
+      </Link>
+      <h3 style={{ marginBottom: '0.5rem' }}>{product.name}</h3>
+      <p style={{
+        color: 'var(--text-muted)',
+        fontSize: '0.9rem',
+        marginBottom: '1rem'
+      }}>
+        {product.description}
+      </p>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}>
+        <span style={{
+          color: 'var(--primary)',
+          fontWeight: 'bold',
+          fontSize: '1.2rem'
+        }}>
+          ${product.price}
+        </span>
+        <button
+          className="btn btn-primary"
+          style={{ padding: '0.5rem 1rem', fontSize: '0.8rem' }}
+          onClick={(e) => {
+            e.stopPropagation();
+            addToCart(product);
+          }}
+        >
+          Add to Cart
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default ProductCard;
+```
+
+### 19.6 Glassmorphism Design Tokens
+
+```css
+:root {
+  --primary: #c9a66b;
+  --secondary: #1a1a1a;
+  --bg-dark: #0a0a0a;
+  --text-light: #f5f5f5;
+  --text-muted: #a0a0a0;
+  --accent: #e5c9a0;
+  --glass: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+}
+
+.btn {
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-block;
+  border: none;
+  font-size: 1rem;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--secondary);
+}
+
+.btn-primary:hover {
+  background: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(201, 166, 107, 0.2);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+}
+
+.btn-outline:hover {
+  background: var(--primary);
+  color: var(--secondary);
+}
+```
+
+---
+
+*End of Documentation — CARA Premium Fashion Platform v1.0*
